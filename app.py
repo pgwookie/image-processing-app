@@ -5,40 +5,41 @@ from tkinter import filedialog, messagebox, simpledialog
 from PIL import Image, ImageTk
 import os
 
+
 class ImageProcessorApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Image Processor")
+    def __init__(self, master):  # Переименовали root на master
+        self.master = master  # Используем master вместо root
+        self.master.title("Image Processor")
 
         self.img = None  # Загруженное изображение
         self.img_original = None  # Оригинал для восстановления
 
         # Кнопки для выбора действия
-        self.load_button = tk.Button(root, text="Загрузить изображение", command=self.load_image)
+        self.load_button = tk.Button(master, text="Загрузить изображение", command=self.load_image)
         self.load_button.pack()
 
-        self.webcam_button = tk.Button(root, text="Подключиться к веб-камере", command=self.capture_webcam)
+        self.webcam_button = tk.Button(master, text="Подключиться к веб-камере", command=self.capture_webcam)
         self.webcam_button.pack()
 
-        self.red_button = tk.Button(root, text="Красный канал", command=lambda: self.show_channel("Red"))
+        self.red_button = tk.Button(master, text="Красный канал", command=lambda: self.show_channel("Red"))
         self.red_button.pack()
 
-        self.green_button = tk.Button(root, text="Зеленый канал", command=lambda: self.show_channel("Green"))
+        self.green_button = tk.Button(master, text="Зеленый канал", command=lambda: self.show_channel("Green"))
         self.green_button.pack()
 
-        self.blue_button = tk.Button(root, text="Синий канал", command=lambda: self.show_channel("Blue"))
+        self.blue_button = tk.Button(master, text="Синий канал", command=lambda: self.show_channel("Blue"))
         self.blue_button.pack()
 
-        self.resize_button = tk.Button(root, text="Изменить размер изображения", command=self.resize_image)
+        self.resize_button = tk.Button(master, text="Изменить размер изображения", command=self.resize_image)
         self.resize_button.pack()
 
-        self.brightness_button = tk.Button(root, text="Понизить яркость", command=self.decrease_brightness)
+        self.brightness_button = tk.Button(master, text="Понизить яркость", command=self.decrease_brightness)
         self.brightness_button.pack()
 
-        self.circle_button = tk.Button(root, text="Нарисовать круг", command=self.draw_circle)
+        self.circle_button = tk.Button(master, text="Нарисовать круг", command=self.draw_circle)
         self.circle_button.pack()
 
-        self.canvas = tk.Canvas(root)
+        self.canvas = tk.Canvas(master)
         self.canvas.pack()
 
     def load_image(self):
@@ -107,6 +108,8 @@ class ImageProcessorApp:
             img_channel = self.img[:, :, 1]
         elif channel == "Blue":
             img_channel = self.img[:, :, 0]
+        else:
+            img_channel = np.zeros_like(self.img[:, :, 0])  # Если канал не определён
 
         img_channel_colored = cv2.merge([img_channel, img_channel, img_channel])
         self.show_image(img_channel_colored)
@@ -170,6 +173,7 @@ class ImageProcessorApp:
         thickness = 2
         cv2.circle(self.img, (center_x, center_y), radius, color, thickness)
         self.show_image(self.img)
+
 
 if __name__ == "__main__":
     root = tk.Tk()
